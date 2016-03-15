@@ -31,7 +31,9 @@ class StringSearcher(object):
 
         Returns a dictionary.
         '''
-        search = self.corpus[self.corpus[on].isnull()==False]
+        search = self.corpus[self.corpus[on].isnull()==False].astype(str)
+        print("SDFASFADSFADFAFASDF")
+        print(search[on])
         found = search[search[on].str.contains(str(pattern),
                                                case=False,
                                                regex=regex)]
