@@ -29,7 +29,6 @@ class CosineMatcher(object):
 
         '''
         self.match_corpus = None
-        self.training_corpus = None
         self.matrix = None 
         self.vectorizer = TfidfVectorizer(encoding=encoding, analyzer=analyzer,\
             ngram_range=ngram_range, min_df=min_df, max_df=max_df,\
@@ -38,11 +37,16 @@ class CosineMatcher(object):
 
     def train(self, corpus, train_on='training_col'):
         '''
-        We are assuming that corpus is a pandas dataframe
+        Fit the training corpus to the TF-IDF Vectorizer.
+
+        corpus: Path to CSV file containing the training corpus.
+        train_on: Name of the column in the CSV.
         '''
-        self.match_corpus = corpus[corpus[train_on].isnull()==False].reset_index()
-        self.training_corpus = self.match_corpus[train_on].values
-        self.matrix = self.vectorizer.fit_transform(self.training_corpus)
+        df_corpus = pd.read_csv(corpus)
+        self.match_corpus = df_corpus[
+            df_corpus[train_on].isnull()==False].reset_index()
+        training_corpus = self.match_corpus[train_on].values
+        self.matrix = self.vectorizer.fit_transform(training_corpus)
 
 
     def check_matches(self, target, n_best):
@@ -68,7 +72,7 @@ class CosineMatcher(object):
             match_values['score'] = '{:.2f}'.format(score*100)
             best_matches = best_matches.append(match_values)
         best_matches = best_matches.where((pd.notnull(best_matches)), '')
-        return best_matches
+        return best_matches.to_dict('list')
 
 
 if __name__ == '__main__':

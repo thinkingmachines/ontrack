@@ -15,8 +15,10 @@ class StringSearcher(object):
     def set_corpus(self, corpus):
         '''
         Set the dataframe to use as a search space.
+
+        corpus: Path to CSV file.
         '''
-        self.corpus = corpus
+        self.corpus = pd.read_csv(corpus)
 
     def find(self, pattern, on, regex=False):
         '''
@@ -27,15 +29,13 @@ class StringSearcher(object):
         self.corpus must be a dataframe with a column whose name is specified 
         in the "on" argument.
 
-        Returns a DataFrame.
+        Returns a dictionary.
         '''
-        try:
-            return self.corpus[self.corpus[on].str.contains(str(pattern),
-                                                            case=False,
-                                                            regex=regex)]
-        except AttributeError:
-            print('Corpus must be an instance of <pandas.core.frame.DataFrame>')
-            return pd.DataFrame()
+        search = self.corpus[self.corpus[on].isnull()==False]
+        found = search[search[on].str.contains(str(pattern),
+                                               case=False,
+                                               regex=regex)]
+        return found.to_dict('list')
 
 if __name__ == '__main__':
     pass
