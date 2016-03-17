@@ -21,7 +21,7 @@ Dependencies will be installed during setup.
 
 ### Usage ###
 
-1. Create String Searcher and Cosine Matcher objects.
+1.Create String Searcher and Cosine Matcher objects.
 ```
 from string_searcher import StringSearcher
 from cosine_matcher import CosineMatcher
@@ -29,22 +29,26 @@ from cosine_matcher import CosineMatcher
 str_search = StringSearcher()
 cos_match = CosineMatcher()
 ```
-2. Set search space corpus.
+
+2.Set search space corpus.
 ```
 str_search.set_corpus('path-to-file.csv')
 cos_match.train('path-to-file.csv', train_on='column_name')
 ```
-3. Find records with exact, case-insensitive substring matches from a specific column in the corpus.
+
+3.Find records with exact, case-insensitive substring matches from a specific column in the corpus.
 ```
 matches = str_search.find('Query String', on='column_name')
 ```
-4. Prepare text query.
+
+4.Prepare text query.
 ```
 from text_cleaners import clean_tokens, stringify
 
 clean_query = stringify(clean_tokens('Query String'))
 ```
-5. Find top 5 records with the highest cosine similarity score.
+
+5.Find top 5 records with the highest cosine similarity score.
 ```
 matches = cos_match.check_matches(clean_query, 5)
 ```
