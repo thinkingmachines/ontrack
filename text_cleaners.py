@@ -10,16 +10,16 @@ stemmer = PorterStemmer()
 def clean_punctuation(text):
     """ Converts to lowercase and replaces all non-alphanumeric with spaces. """
     no_punc = ''.join([w if w.isalnum() else ' ' for w in text.lower()])
-    return no_punc
+    return no_punc.split()
 
-def remove_stop(text):
-    """ Removes stopwords, e.g. 'the', 'at', 'on', etc."""
-    no_stopwords = [word for word in text.split() if not word in stopwords]
+def remove_stop(tokens):
+    """ Removes stopwords, e.g. 'the', 'at', 'on', etc. """
+    no_stopwords = [word for word in tokens if not word in stopwords]
     return no_stopwords
 
-def stem(text):
+def stem(tokens):
     """ Applies PorterStemmer to the tokens. (https://en.wikipedia.org/wiki/Stemming) """
-    stemmed = [stemmer.stem(word) for word in text]
+    stemmed = [stemmer.stem(word) for word in tokens]
     return stemmed
 
 def stringify(tokens):
@@ -29,7 +29,6 @@ def stringify(tokens):
 def clean_tokens(text):
     """ Single function that combines stopping, stemming, and cleaning punctuation """
     return stringify(stem(remove_stop(clean_punctuation(text))))
-
 
 if __name__ == '__main__':
     """ sample usage """
