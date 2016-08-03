@@ -1,14 +1,7 @@
-'''
-
+"""
 This class uses scikit-learn to vectorize a corpus of text and
 allow comparison of new documents to the existing corpus matrix
-
-SAMPLE USAGE:
-searcher = CosineMatcher()
-searcher.train('C:/Users/User/Desktop/myFile.csv')
-searcher.find('manila irrigation')
->>> {'manila north rd ...
-'''
+"""
 
 import pandas as pd
 import numpy as np
@@ -19,7 +12,7 @@ from sklearn.metrics.pairwise import linear_kernel
 class CosineMatcher(object):
     def __init__(self, encoding='utf-8', analyzer='word', ngram_range=(1,1), \
                  min_df = 1, max_df = 0.8, use_idf=True):
-        '''
+        """
         Defaults
 
         encoding=utf-8
@@ -32,7 +25,12 @@ class CosineMatcher(object):
 
         This code assumes that you have already cleaned & processed the text corpus.
 
-        '''
+        SAMPLE USAGE:
+        searcher = CosineMatcher()
+        searcher.train('C:/Users/User/Desktop/myFile.csv')
+        searcher.find('manila irrigation')
+        >>> {'manila north rd ...
+        """
         self.match_corpus = None
         self.matrix = None
         self.vectorizer = TfidfVectorizer(encoding=encoding, analyzer=analyzer,\
@@ -41,12 +39,16 @@ class CosineMatcher(object):
 
 
     def train(self, corpus, train_on='searchspace'):
-        '''
+        """
         Fit the training corpus to the TF-IDF Vectorizer.
 
         corpus: Path to CSV file containing the training corpus.
         train_on: Name of the column in the CSV.
-        '''
+
+        SAMPLE USAGE
+        searcher = CosineMatcher()
+        searcher.train('C:/Users/User/Desktop/myFile.csv')
+        """
         if type(df_corpus) in [str, unicode]:
             corpus = pd.read_csv(corpus)
         self.match_corpus = corpus[corpus[train_on].notnull()].reset_index()
@@ -55,14 +57,20 @@ class CosineMatcher(object):
 
 
     def find(self, target, n_best, dfOutput=True):
-        '''
+        """
         target is a string
         n_best is the number of matches we want returned
 
         Transforms target query into vector form
         Calculates dot product across tfidf matrix
         Returns a list of the n_best matches for the target
-        '''
+
+        SAMPLE USAGE:
+        searcher = CosineMatcher()
+        searcher.train('C:/Users/User/Desktop/myFile.csv')
+        searcher.find('manila irrigation')
+        >>> {'manila north rd ...
+        """
 
         if not isinstance(target, unicode) and np.isnan(target):
             target = ''
