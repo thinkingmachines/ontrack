@@ -32,7 +32,8 @@ def remove_stop(tokens):
     remove_stop(['rehabilitation', 'reconstruction', 'removal', 'of', 'gravel'])
     >>> ['rehabilitation', 'reconstruction', 'removal', 'gravel']
     """
-    no_stopwords = [word for word in tokens if not word in stopwords]
+    no_stopwords = [word for word in tokens 
+                    if (not word in stopwords) and (len(word) > 1)]
     return no_stopwords
 
 def stem(tokens):
