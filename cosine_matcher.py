@@ -35,16 +35,16 @@ class CosineMatcher(object):
             use_idf=use_idf)
 
 
-    def train(self, corpus, train_on='training_col'):
+    def train(self, corpus, train_on='searchspace'):
         '''
         Fit the training corpus to the TF-IDF Vectorizer.
 
         corpus: Path to CSV file containing the training corpus.
         train_on: Name of the column in the CSV.
         '''
-        df_corpus = pd.read_csv(corpus)
-        self.match_corpus = df_corpus[
-            df_corpus[train_on].isnull()==False].reset_index()
+        if type(df_corpus) in [str, unicode]:
+            corpus = pd.read_csv(corpus)
+        self.match_corpus = corpus[corpus[train_on].notnull()].reset_index()
         training_corpus = self.match_corpus[train_on].values
         self.matrix = self.vectorizer.fit_transform(training_corpus)
 
