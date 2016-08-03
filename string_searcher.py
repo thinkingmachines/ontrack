@@ -18,7 +18,9 @@ class StringSearcher(object):
 
         corpus: Path to CSV file.
         '''
-        self.corpus = pd.read_csv(corpus)
+        if type(df_corpus) == str:
+            corpus = pd.read_csv(corpus)
+        self.corpus = corpus
 
     def find(self, pattern, on, regex=False):
         '''
@@ -31,7 +33,7 @@ class StringSearcher(object):
 
         Returns a dictionary.
         '''
-        search = self.corpus[self.corpus[on].isnull()==False].astype(str)
+        search = self.corpus[self.corpus[on].notnull()].astype(str)
         found = search[search[on].str.contains(str(pattern),
                                                case=False,
                                                regex=regex)]
