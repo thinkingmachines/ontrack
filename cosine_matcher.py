@@ -49,7 +49,7 @@ class CosineMatcher(object):
         self.matrix = self.vectorizer.fit_transform(training_corpus)
 
 
-    def check_matches(self, target, n_best):
+    def check_matches(self, target, n_best, dfOutput=True):
         '''
         target is a string
         n_best is the number of matches we want returned
@@ -65,15 +65,13 @@ class CosineMatcher(object):
         cosine_sim = linear_kernel(vectorized_query, self.matrix).flatten()
         n_best_matches_indices = cosine_sim.argsort()[:-n_best-1:-1]
 
-        best_matches = pd.DataFrame()
-        for index in n_best_matches_indices:
-            match_values = self.match_corpus.ix[index]
-            score = cosine_sim[index]
-            match_values['score'] = '{:.2f}'.format(score*100)
-            best_matches = best_matches.append(match_values)
-        best_matches = best_matches.where((pd.notnull(best_matches)), '')
+        best_matches = pd.DataFrame(self.match_corpus.ix[n_best_matches_indices])
+        best_matches['score'] = ['{:.2f}'.format(i)
+                                for i in cosine_sim[n_best_matches_indices]]
+        best_matches = best_matches.where((pd.notnull(best_matches)), '') #what is this line for?
+        if dfOutput:
+            return best_matches
         return best_matches.to_dict('list')
-
 
 if __name__ == '__main__':
     pass
