@@ -8,26 +8,71 @@ stopwords = set(['i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'y
 stemmer = PorterStemmer()
 
 def clean_punctuation(text):
-    """ Converts to lowercase and replaces all non-alphanumeric with spaces. """
+    """
+    Converts to lowercase and replaces all non-alphanumeric with spaces.
+
+    Input: text
+    Output: list of words
+
+    Sample usage:
+    clean_punctuation('Rehabilitation/Reconstruction/Removal of Gravel')
+    >>> ['rehabilitation', 'reconstruction', 'removal', 'of', 'gravel']
+    """
     no_punc = ''.join([w if w.isalnum() else ' ' for w in text.lower()])
     return no_punc.split()
 
 def remove_stop(tokens):
-    """ Removes stopwords, e.g. 'the', 'at', 'on', etc. """
+    """
+    Removes stopwords, e.g. 'the', 'at', 'on', etc.
+
+    Input: list of words
+    Output: list of words
+
+    Sample usage:
+    remove_stop(['rehabilitation', 'reconstruction', 'removal', 'of', 'gravel'])
+    >>> ['rehabilitation', 'reconstruction', 'removal', 'gravel']
+    """
     no_stopwords = [word for word in tokens if not word in stopwords]
     return no_stopwords
 
 def stem(tokens):
-    """ Applies PorterStemmer to the tokens. (https://en.wikipedia.org/wiki/Stemming) """
+    """
+    Applies PorterStemmer to the tokens. (https://en.wikipedia.org/wiki/Stemming)
+
+    Input: list of words
+    Output: list of words
+
+    Sample usage:
+    stem(['rehabilitation', 'reconstruction', 'removal', 'gravel'])
+    >>> ['rehabilit', 'reconstruct', 'remov', 'gravel']
+    """
     stemmed = [stemmer.stem(word) for word in tokens]
     return stemmed
 
 def stringify(tokens):
-    """ Turns the tokens back into a string. """
-    return ' '.join(tokens) # remove the last space
+    """
+    Turns the tokens back into a string.
 
-def clean_tokens(text):
-    """ Single function that combines stopping, stemming, and cleaning punctuation """
+    Input: list of words
+    Output: text
+
+    Sample usage:
+    stringify(['rehabilit', 'reconstruct', 'remov', 'gravel'])
+    >>> 'rehabilit reconstruct remov gravel'
+    """
+    return ' '.join(tokens)
+
+def clean_text(text):
+    """
+    Single function that combines stopping, stemming, and cleaning punctuation.
+
+    Input: text
+    Output: text
+
+    Sample usage:
+    clean_text('Rehabilitation/Reconstruction/Removal of Gravel')
+    >>> 'rehabilit reconstruct remov gravel'
+    """
     return stringify(stem(remove_stop(clean_punctuation(text))))
 
 if __name__ == '__main__':
@@ -35,5 +80,5 @@ if __name__ == '__main__':
     t = "Rehabilitation/Reconstruction/Removal of Gravel on Bulacan, Road. North km+1993-km+384"
     print t
 
-    st = clean_tokens(t)
+    st = clean_text(t)
     print st
