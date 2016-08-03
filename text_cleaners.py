@@ -42,17 +42,13 @@ def stringify(tokens):
     Turns the tokens back into a string. Seems unnecessary.
     Come back and fix this!
     '''
-    s = ''
-    for token in tokens:
-        s += token
-        s += ' '
-    return s.rstrip() # remove the last space
+    return ' '.join(tokens) # remove the last space
 
 def clean_tokens(text):
     '''
     Single function that combines stopping, stemming, and cleaning punctuation
     '''
-    return ' '.join(stem(remove_stop(clean_punctuation(text))))
+    return stringify(stem(remove_stop(clean_punctuation(text))))
 
 
 if __name__ == '__main__':
