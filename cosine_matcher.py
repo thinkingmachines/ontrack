@@ -3,6 +3,11 @@
 This class uses scikit-learn to vectorize a corpus of text and
 allow comparison of new documents to the existing corpus matrix
 
+SAMPLE USAGE:
+searcher = CosineMatcher()
+searcher.train('C:/Users/User/Desktop/myFile.csv')
+searcher.find('manila irrigation')
+>>> {'manila north rd ...
 '''
 
 import pandas as pd
@@ -49,7 +54,7 @@ class CosineMatcher(object):
         self.matrix = self.vectorizer.fit_transform(training_corpus)
 
 
-    def check_matches(self, target, n_best, dfOutput=True):
+    def find(self, target, n_best, dfOutput=True):
         '''
         target is a string
         n_best is the number of matches we want returned
