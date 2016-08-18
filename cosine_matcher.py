@@ -81,7 +81,6 @@ class CosineMatcher(object):
         best_matches = pd.DataFrame(self.match_corpus.ix[n_best_matches_indices])
         best_matches['score'] = ['{:.2f}'.format(i)
                                 for i in cosine_sim[n_best_matches_indices]]
-        best_matches = best_matches.where((pd.notnull(best_matches)), '') #what is this line for?
         if dfOutput:
             return best_matches
         return best_matches.to_dict('list')
