@@ -28,7 +28,7 @@ class StringSearcher(object):
             corpus = pd.read_csv(corpus)
         self.corpus = corpus
 
-def find(self, pattern, on = 'searchspace', regex=False, dfOutput=True):
+    def find(self, pattern, on = 'searchspace', regex=False, dfOutput=True):
         """
         pattern: A string to search for.
         on: name of data frame column to use as search space.
