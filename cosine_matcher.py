@@ -1,9 +1,10 @@
-"""
+'''
+
 This class uses scikit-learn to vectorize a corpus of text and
 allow comparison of new documents to the existing corpus matrix
-"""
 
-import pandas as pd
+'''
+
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
@@ -12,7 +13,7 @@ from sklearn.metrics.pairwise import linear_kernel
 class CosineMatcher(object):
     def __init__(self, encoding='utf-8', analyzer='word', ngram_range=(1,1), \
                  min_df = 1, max_df = 0.8, use_idf=True):
-        """
+        '''
         Defaults
 
         encoding=utf-8
@@ -22,15 +23,7 @@ class CosineMatcher(object):
         We aren't using TfidfVectorizer's built-in tokenizer and stop/stem
         functionality because we have chosen to pre-process that text and will
         be running other types of matching on the stop/stemmed text.
-
-        This code assumes that you have already cleaned & processed the text corpus.
-
-        SAMPLE USAGE:
-        searcher = CosineMatcher()
-        searcher.train('C:/Users/User/Desktop/myFile.csv')
-        searcher.find('manila irrigation')
-        >>> {'manila north rd ...
-        """
+        '''
         self.match_corpus = None
         self.matrix = None
         self.vectorizer = TfidfVectorizer(encoding=encoding, analyzer=analyzer,\
@@ -38,52 +31,32 @@ class CosineMatcher(object):
             use_idf=use_idf)
 
 
-    def train(self, corpus, train_on='searchspace'):
-        """
+    def set_corpus(self, corpus):
+        '''
         Fit the training corpus to the TF-IDF Vectorizer.
 
-        corpus: Path to CSV file containing the training corpus.
-        train_on: Name of the column in the CSV.
+        corpus: A hashable object containing the searchspace strings
+        '''
 
-        SAMPLE USAGE
-        searcher = CosineMatcher()
-        searcher.train('C:/Users/User/Desktop/myFile.csv')
-        """
-        if type(df_corpus) in [str, unicode]:
-            corpus = pd.read_csv(corpus)
-        self.match_corpus = corpus[corpus[train_on].notnull()].reset_index()
-        training_corpus = self.match_corpus[train_on].values
-        self.matrix = self.vectorizer.fit_transform(training_corpus)
+#        self.match_corpus = corpus[corpus.notnull()]
+        self.matrix = self.vectorizer.fit_transform(corpus)
 
 
-    def find(self, target, n_best, dfOutput=True):
-        """
+    def find(self, target, n_best = 5):
+        '''
         target is a string
         n_best is the number of matches we want returned
 
         Transforms target query into vector form
         Calculates dot product across tfidf matrix
         Returns a list of the n_best matches for the target
+        '''
 
-        SAMPLE USAGE:
-        searcher = CosineMatcher()
-        searcher.train('C:/Users/User/Desktop/myFile.csv')
-        searcher.find('manila irrigation')
-        >>> {'manila north rd ...
-        """
-
-        if not isinstance(target, unicode) and np.isnan(target):
-            target = ''
         vectorized_query = self.vectorizer.transform([target])
         cosine_sim = linear_kernel(vectorized_query, self.matrix).flatten()
         n_best_matches_indices = cosine_sim.argsort()[:-n_best-1:-1]
-
-        best_matches = pd.DataFrame(self.match_corpus.ix[n_best_matches_indices])
-        best_matches['score'] = ['{:.2f}'.format(i)
-                                for i in cosine_sim[n_best_matches_indices]]
-        if dfOutput:
-            return best_matches
-        return best_matches.to_dict('list')
+        return {'indices': n_best_matches_indices,
+                'scores': cosine_sim[n_best_matches_indices]}
 
 if __name__ == '__main__':
     pass
