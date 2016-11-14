@@ -5,5 +5,5 @@ except ImportError:
 
 setup(name='ontrack',
       version='1.0',
-      py_modules=['cosine_matcher', 'text_cleaners', 'string_searcher'],
+      py_modules=['cosine_matcher', 'text_cleaners', 'string_searcher', 'ontrack_io'],
       install_requires=['numpy', 'pandas', 'nltk', 'scipy>=0.16.1', 'scikit-learn'])
