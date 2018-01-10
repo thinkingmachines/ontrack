@@ -15,7 +15,7 @@ Need porter stemmer, and the stopwords corpus
 import nltk
 from nltk.stem.porter import *
 from nltk.corpus import stopwords
-from string import maketrans
+from bytes import maketrans
 
 def clean_punctuation(text):
     #fixed_slashes = text.replace('/',' ')
