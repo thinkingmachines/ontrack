@@ -5,6 +5,7 @@ allow comparison of new documents to the existing corpus matrix
 
 '''
 
+import pandas as pd
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
@@ -23,26 +24,33 @@ class CosineMatcher(object):
         We aren't using TfidfVectorizer's built-in tokenizer and stop/stem
         functionality because we have chosen to pre-process that text and will
         be running other types of matching on the stop/stemmed text.
+
+        This code assumes that you have already processed the corpus.
+
         '''
         self.match_corpus = None
         self.matrix = None
+        self.encoding = encoding
         self.vectorizer = TfidfVectorizer(encoding=encoding, analyzer=analyzer,\
             ngram_range=ngram_range, min_df=min_df, max_df=max_df,\
             use_idf=use_idf)
 
 
-    def set_corpus(self, corpus):
+    def train(self, corpus, train_on='training_col'):
         '''
         Fit the training corpus to the TF-IDF Vectorizer.
 
-        corpus: A hashable object containing the searchspace strings
+        corpus: Path to CSV file containing the training corpus.
+        train_on: Name of the column in the CSV.
         '''
+        df_corpus = pd.read_csv(corpus, encoding=self.encoding)
+        self.match_corpus = df_corpus[
+            df_corpus[train_on].isnull()==False].reset_index()
+        training_corpus = self.match_corpus[train_on].values
+        self.matrix = self.vectorizer.fit_transform(training_corpus)
 
-#        self.match_corpus = corpus[corpus.notnull()]
-        self.matrix = self.vectorizer.fit_transform(corpus)
 
-
-    def find(self, target, n_best = 5):
+    def check_matches(self, target, n_best):
         '''
         target is a string
         n_best is the number of matches we want returned
@@ -52,11 +60,22 @@ class CosineMatcher(object):
         Returns a list of the n_best matches for the target
         '''
 
+        if not isinstance(target, unicode) and np.isnan(target):
+            target = ''
         vectorized_query = self.vectorizer.transform([target])
         cosine_sim = linear_kernel(vectorized_query, self.matrix).flatten()
         n_best_matches_indices = cosine_sim.argsort()[:-n_best-1:-1]
-        return {'indices': n_best_matches_indices,
-                'scores': cosine_sim[n_best_matches_indices]}
+
+        best_matches = pd.DataFrame()
+        for index in n_best_matches_indices:
+            match_values = self.match_corpus.ix[index]
+            score = cosine_sim[index]
+            match_values['score'] = '{:.2f}'.format(score*100)
+            best_matches = best_matches.append(match_values)
+        best_matches = best_matches.where((pd.notnull(best_matches)), '')
+        return best_matches.to_dict('list')
+
 
 if __name__ == '__main__':
     pass
+
