@@ -1,88 +1,64 @@
-"""
-Cleans text in preparation for analysis by string searcher and cosine matcher.
-"""
+# encountering a byte error because sql dumps are in latin1
+#import sys
+#reload(sys)
+#sys.setdefaultencoding('latin-1')
 
-from nltk.stem.porter import PorterStemmer
+'''
 
-stopwords = set(['i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', 'your', 'yours', 'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', 'her', 'hers', 'herself', 'it', 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves', 'what', 'which', 'who', 'whom', 'this', 'that', 'these', 'those', 'am', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of', 'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again', 'further', 'then', 'once', 'here', 'there', 'when', 'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don', 'should', 'now', 'd', 'll', 'm', 'o', 're', 've', 'y', 'ain', 'aren', 'couldn', 'didn', 'doesn', 'hadn', 'hasn', 'haven', 'isn', 'ma', 'mightn', 'mustn', 'needn', 'shan', 'shouldn', 'wasn', 'weren', 'won', 'wouldn'])
-stemmer = PorterStemmer()
+IMPORTANT: Requires several nltk packages.
+Install by running
+import nltk
+nltk.download()
 
-def clean_punctuation(text, keepChars=''):
-    """
-    Converts to lowercase and replaces all non-alphanumeric with spaces.
+Need porter stemmer, and the stopwords corpus
+'''
+import nltk
+from nltk.stem.porter import *
+from nltk.corpus import stopwords
+from string import maketrans
 
-    Input: text
-    Output: list of words
+def clean_punctuation(text):
+    #fixed_slashes = text.replace('/',' ')
+    fixed_slashes = text
+    custom_punc = '!"#$%&\'()*,.:;<=>?@[\]^_`{|}-~'
+    translate_table = maketrans(custom_punc, ''.join([' ' for i in range(
+        0, len(custom_punc))]))
+    try:
+        desc = fixed_slashes.lower().translate(translate_table)
+        return desc
+    except TypeError:
+        print('TypeError: Translate function does not accept unicode.')
 
-    Sample usage:
-    clean_punctuation('Rehabilitation/Reconstruction/Removal of Gravel')
-    >>> ['rehabilitation', 'reconstruction', 'removal', 'of', 'gravel']
-    """
-    if keepChars:
-        no_punc = ''.join([w if w.isalnum() or w in keepChars else ' ' for w in text.lower()])
-    else:
-        no_punc = ''.join([w if w.isalnum() else ' ' for w in text.lower()])
-    return no_punc.split()
-
-def remove_stop(tokens):
-    """
-    Removes stopwords, e.g. 'the', 'at', 'on', etc.
-
-    Input: list of words
-    Output: list of words
-
-    Sample usage:
-    remove_stop(['rehabilitation', 'reconstruction', 'removal', 'of', 'gravel'])
-    >>> ['rehabilitation', 'reconstruction', 'removal', 'gravel']
-    """
-    no_stopwords = [word for word in tokens
-                    if (not word in stopwords) and (len(word) > 1)]
+def remove_stop(text):
+    desc_tokens = nltk.word_tokenize(text)
+    no_stopwords = [word for word in desc_tokens if not word in stopwords.words('english')]
+    no_stopwords = [word for word in no_stopwords if not word in ['+', '-']] # remove singletons
     return no_stopwords
 
 def stem(tokens):
-    """
-    Applies PorterStemmer to the tokens. (https://en.wikipedia.org/wiki/Stemming)
-
-    Input: list of words
-    Output: list of words
-
-    Sample usage:
-    stem(['rehabilitation', 'reconstruction', 'removal', 'gravel'])
-    >>> ['rehabilit', 'reconstruct', 'remov', 'gravel']
-    """
-    stemmed = [stemmer.stem(word) for word in tokens]
+    stemmed = []
+    for item in tokens:
+        stemmed.append(PorterStemmer().stem(item))
     return stemmed
 
 def stringify(tokens):
-    """
-    Turns the tokens back into a string.
+    s = ''
+    for token in tokens:
+        s += token
+        s += ' '
+    return s.rstrip() # remove the last space
 
-    Input: list of words
-    Output: text
-
-    Sample usage:
-    stringify(['rehabilit', 'reconstruct', 'remov', 'gravel'])
-    >>> 'rehabilit reconstruct remov gravel'
-    """
-    return ' '.join(tokens)
-
-def clean_text(text):
-    """
-    Single function that combines stopping, stemming, and cleaning punctuation.
-
-    Input: text
-    Output: text
-
-    Sample usage:
-    clean_text('Rehabilitation/Reconstruction/Removal of Gravel')
-    >>> 'rehabilit reconstruct remov gravel'
-    """
-    return stringify(stem(remove_stop(clean_punctuation(text))))
+def clean_tokens(text):
+    return stem(remove_stop(clean_punctuation(text)))
 
 if __name__ == '__main__':
-    """ sample usage """
+    '''
+    sample usage
+    '''
     t = "Rehabilitation/Reconstruction/Removal of Gravel on Bulacan, Road. North km+1993-km+384"
-    print t
+    print(t)
 
-    st = clean_text(t)
-    print st
+    st = clean_tokens(t)
+    print(st)
+
+    print(stringify(st))
