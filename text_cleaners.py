@@ -15,14 +15,13 @@ Need porter stemmer, and the stopwords corpus
 import nltk
 from nltk.stem.porter import *
 from nltk.corpus import stopwords
-from bytes import maketrans
 
 def clean_punctuation(text):
     #fixed_slashes = text.replace('/',' ')
     fixed_slashes = text
     custom_punc = '!"#$%&\'()*,.:;<=>?@[\]^_`{|}-~'
-    translate_table = maketrans(custom_punc, ''.join([' ' for i in range(
-        0, len(custom_punc))]))
+    translate_table = str.maketrans(
+        custom_punc, ''.join([' ' for i in range(0, len(custom_punc))]))
     try:
         desc = fixed_slashes.lower().translate(translate_table)
         return desc
