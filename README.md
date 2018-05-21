@@ -70,10 +70,10 @@ Read more about our pilot test [here](http://stories.thinkingmachin.es/ontrackph
 
 ### Contributors ###
 
-Stephanie Sy
-Ray Dino
-Jose Araneta
-Gilian Uy
+- Stephanie Sy
+- Ray Dino
+- Jose Araneta
+- Gilian Uy
 
 ### Contact ###
 This is a work in progress. Please send comments and questions to `hello@thinkingmachin.es`.
