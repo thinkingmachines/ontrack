@@ -1,6 +1,10 @@
 # OnTrack #
 
-OnTrack is a collection of text cleaner scripts and matcher classes to find matches for a query string from a corpus of text documents.
+OnTrack tackles the problem of huge numbers of unmatched, messy records across government data silos by using word vectorization and cosine matching to identify the best possible matches for any government record.
+
+Read more about our pilot test here.
+
+This repo contains a collection of text cleaner scripts and matcher classes.
 
 ### Dependencies ###
 * numpy
@@ -54,4 +58,5 @@ matches = cos_match.check_matches(clean_query, 5)
 ```
 
 ### Contact ###
-Direct all comments and questions to `hello@thinkingmachin.es`.
+
+This is a work in progress. Please send comments and questions to `hello@thinkingmachin.es`.

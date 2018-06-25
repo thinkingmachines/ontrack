@@ -1,6 +1,6 @@
 '''
 
-This class uses scikit-learn to vectorize a corpus of text and 
+This class uses scikit-learn to vectorize a corpus of text and
 allow comparison of new documents to the existing corpus matrix
 
 '''
@@ -17,19 +17,19 @@ class CosineMatcher(object):
         '''
         Defaults
 
-        encoding=utf-8 
+        encoding=utf-8
         min_df = 1 => only include token if it appears in at least 1 document
         max_df = 0.8 => drop the token if it appears in over 80pc of the docs
 
-        We aren't using TfidfVectorizer's built-in tokenizer and stop/stem 
-        functionality because we have chosen to pre-process that text and will 
-        be running other types of matching on the stop/stemmed text. 
+        We aren't using TfidfVectorizer's built-in tokenizer and stop/stem
+        functionality because we have chosen to pre-process that text and will
+        be running other types of matching on the stop/stemmed text.
 
-        This code assumes that you have already processed the corpus. 
+        This code assumes that you have already cleaned & processed the text corpus.
 
         '''
         self.match_corpus = None
-        self.matrix = None 
+        self.matrix = None
         self.vectorizer = TfidfVectorizer(encoding=encoding, analyzer=analyzer,\
             ngram_range=ngram_range, min_df=min_df, max_df=max_df,\
             use_idf=use_idf)
@@ -53,11 +53,11 @@ class CosineMatcher(object):
         '''
         target is a string
         n_best is the number of matches we want returned
-        
-        Transforms target query into vector form 
+
+        Transforms target query into vector form
         Calculates dot product across tfidf matrix
         Returns a list of the n_best matches for the target
-        '''     
+        '''
 
         if not isinstance(target, unicode) and np.isnan(target):
             target = ''
@@ -67,7 +67,7 @@ class CosineMatcher(object):
 
         best_matches = pd.DataFrame()
         for index in n_best_matches_indices:
-            match_values = self.match_corpus.ix[index] 
+            match_values = self.match_corpus.ix[index]
             score = cosine_sim[index]
             match_values['score'] = '{:.2f}'.format(score*100)
             best_matches = best_matches.append(match_values)
@@ -77,4 +77,3 @@ class CosineMatcher(object):
 
 if __name__ == '__main__':
     pass
-

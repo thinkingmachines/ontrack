@@ -1,5 +1,5 @@
 '''
-This class allows filtering of a dataframe based on whether or not a 
+This class allows filtering of a dataframe based on whether or not a
 dataframe column value contains the target string.
 '''
 
@@ -26,7 +26,7 @@ class StringSearcher(object):
         on: name of data frame column to use as search space.
         regex: Set to True to use pattern as a regex.
 
-        self.corpus must be a dataframe with a column whose name is specified 
+        self.corpus must be a dataframe with a column whose name is specified
         in the "on" argument.
 
         Returns a dictionary.
